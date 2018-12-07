@@ -1,7 +1,4 @@
 #include <stdlib.h>
-
-#include <stdio.h>
-
 #include "malloc.h"
 
 #define SIZE 1000000
@@ -294,7 +291,6 @@ void *_realloc(void *ptr, size_t size)
         }
       }
       //Store data in block, stopping if new size is less than requested
-      //size_t tsize = *(size_t*)&X[i+1];
       for(int k = 0; k < tsize && k < size; k++)
       {
         X[i+META_SIZE+k] = temp[k];
