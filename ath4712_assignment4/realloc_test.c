@@ -4,7 +4,7 @@
 
 #include "malloc.h"
 
-
+//Tests _realloc() and _malloc()
 
 int main ( int argc, char* argv[] )
 {
@@ -33,6 +33,9 @@ int main ( int argc, char* argv[] )
 
   printf("\nMake size bigger (2 -> 10)\n");
   A = (char*) _realloc(A, 10);
+
+  A[0] = 'A'; A[1] = 'B'; A[2] = 'C'; A[3] = 'D'; A[4] = 'E';
+  A[5] = 'C'; A[6] = 'D'; A[7] = 'E'; A[8] = 'F'; A[9] = 'G';
 
   printf("A is : ");
   for(int i = 0; i < 10; i++)
