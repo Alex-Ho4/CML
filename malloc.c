@@ -1,5 +1,7 @@
 #include <stdlib.h>
 
+#include <stdio.h>
+
 #include "malloc.h"
 
 #define SIZE 1000000
@@ -40,7 +42,7 @@ void *_malloc(size_t size)
 
       //if next size is less than size of meta data, don't allocate next block
       size_t next_size = (bsize - (META_SIZE + size));
-      if(next_size > META_SIZE)
+      if((long)next_size > 0 && next_size > META_SIZE)
       {
         //Create next block of memory (set free flag and size)
         X[i+META_SIZE+size] = 'f';
@@ -62,13 +64,17 @@ void *_malloc(size_t size)
           first_free = k;
         }
       }
-
       return (void*) &X[i+META_SIZE];
     }
     else
     {
       //Skip ahead by current block size
       i += bsize + META_SIZE;
+      //In case it runs into a fragment
+      while(X[i] != 'a' && X[i] != 'f')
+      {
+        i++;
+      }
     }
   }
 
@@ -77,10 +83,11 @@ void *_malloc(size_t size)
 
 void _free(void *ptr)
 {
-  size_t prev = 0;
+  size_t prev = 1;
   //search for ptr
   for(int i = 1; i < SIZE; i += (*(size_t*)(&X[i+1]) + META_SIZE))
   {
+
     if((void*)(&X[i+META_SIZE]) == ptr)
     {
       //Free the block by changing header
@@ -93,14 +100,16 @@ void _free(void *ptr)
         //combine two free slots
         *(size_t*)(&X[i+1]) = *(size_t*)(&X[i+1]) + META_SIZE + *(size_t*)(&X[next+1]);
 
+        //clear meta data
+        X[next] = '\0';
+        *(size_t*)(&X[next+1]) = 0;
+
         //sets first_free to earliest possible free block
         if(i < first_free)
         {
           first_free = i;
         }
 
-        //removes ptr
-        *(void**)ptr = NULL;
         break;
       }
 
@@ -110,14 +119,16 @@ void _free(void *ptr)
         //combine two free slots
         *(size_t*)(&X[prev+1]) = *(size_t*)(&X[prev+1]) + META_SIZE + *(size_t*)(&X[i+1]);
 
+        //clear meta data
+        X[i] = '\0';
+        *(size_t*)(&X[i+1]) = 0;
+
         //sets first_free to earliest possible free block
         if(prev < first_free)
         {
           first_free = prev;
         }
 
-        //removes ptr
-        *(void**)ptr = NULL;
         break;
       }
 
@@ -127,8 +138,6 @@ void _free(void *ptr)
         first_free = i;
       }
 
-      //removes ptr
-      *(void**)ptr = NULL;
       break;
     }
     else
@@ -176,7 +185,7 @@ void *_calloc(size_t nmemb, size_t size)
 
       //if next size is less than size of meta data, don't allocate next block
       size_t next_size = (bsize - (META_SIZE + asize));
-      if(next_size > META_SIZE)
+      if((long)next_size > 0 && next_size > META_SIZE)
       {
         //Create next block of memory (set free flag and size)
         X[i+META_SIZE+asize] = 'f';
@@ -211,6 +220,11 @@ void *_calloc(size_t nmemb, size_t size)
     {
       //Skip ahead by current block size
       i += bsize + META_SIZE;
+      //In case it runs into a fragment
+      while(X[i] != 'a' && X[i] != 'f')
+      {
+        i++;
+      }
     }
   }
 
@@ -222,8 +236,7 @@ void *_realloc(void *ptr, size_t size)
   //Get and store block data in temp and its size into tsize
   char temp[SIZE];
   size_t tsize = 0;
-  int i = 1;
-  for(; i < SIZE; i += (*(size_t*)(&X[i+1]) + META_SIZE))
+  for(int i = 1; i < SIZE; i += (*(size_t*)(&X[i+1]) + META_SIZE))
   {
     if((void*)(&X[i+META_SIZE]) == ptr)
     {
@@ -250,16 +263,15 @@ void *_realloc(void *ptr, size_t size)
 
     //Get size of current block
     bsize = *(size_t*)(&X[i+1]);
-
     if(X[i] == 'f' && *(size_t*)&X[i+1] >= size)
     {
       //Set block to allocated and set size
       X[i] = 'a';
       *(size_t*)(&X[i+1]) = size;
 
-      //if next size is less than size of meta data, don't allocate next block
+      //if size between next block is less than size of meta data, don't allocate next block
       size_t next_size = (bsize - (META_SIZE + size));
-      if(next_size > META_SIZE)
+      if((long)next_size > 0 && next_size > META_SIZE)
       {
         //Create next block of memory (set free flag and size)
         X[i+META_SIZE+size] = 'f';
@@ -281,9 +293,8 @@ void *_realloc(void *ptr, size_t size)
           first_free = k;
         }
       }
-
       //Store data in block, stopping if new size is less than requested
-      size_t tsize = *(size_t*)&X[i+1];
+      //size_t tsize = *(size_t*)&X[i+1];
       for(int k = 0; k < tsize && k < size; k++)
       {
         X[i+META_SIZE+k] = temp[k];
@@ -294,6 +305,11 @@ void *_realloc(void *ptr, size_t size)
     {
       //Skip ahead by current block size
       i += bsize + META_SIZE;
+      //In case it runs into a fragment
+      while(X[i] != 'a' && X[i] != 'f')
+      {
+        i++;
+      }
     }
   }
   return NULL;

@@ -8,29 +8,38 @@
 
 int main ( int argc, char* argv[] )
 {
-   char* A = NULL;
-   char* B = NULL;
-   A = (char*) _malloc (3);
-   A[0] = 'A'; A[1] = 'B'; A[2] = '\0';
-   printf( "A is %s \n",A);
+  printf("_realloc() test\n\n");
 
-   B = _realloc (A, 5);
-   _free(A);
+  char* A = NULL;
+  A = (char*) _malloc (4);
+  A[0] = 'A'; A[1] = 'B'; A[2] = 'C'; A[3] = 'D';
 
-   printf( "A is %s \n",A);
+  printf("A is : ");
+  for(int i = 0; i < 4; i++)
+  {
+    printf( "%c", A[i] );
+  }
+  printf("\nA address: %p\n", A);
 
-   B[2] = 'C'; B[3] = 'D'; B[4] = '\0';
-   printf( "B is %s \n",B);
+  printf("\nMake size smaller (4 -> 2)\n");
+  A = _realloc(A, 2);
 
-   A = NULL;
-   A = (char*) _malloc (5);
-   A[0] = 'A'; A[1] = 'B'; A[2] = '\0';
-   printf( "A is %s \n",A);
-   printf( "A PTR is %p \n",&A);
+  printf("A is : ");
+  for(int i = 0; i < 2; i++)
+  {
+    printf( "%c", A[i] );
+  }
+  printf("\nA address: %p\n", A);
 
-   A = _realloc (A, 3);
+  printf("\nMake size bigger (2 -> 10)\n");
+  A = (char*) _realloc(A, 10);
 
-   printf( "A is %s \n",A);
-   printf( "A PTR is %p \n",&A);
-   return 0;
+  printf("A is : ");
+  for(int i = 0; i < 10; i++)
+  {
+    printf( "%c", A[i] );
+  }
+  printf("\nA address: %p\n", A);
+
+  return 0;
 }

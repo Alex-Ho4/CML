@@ -41,6 +41,7 @@ int main ( int argc, char* argv[] )
          max = dt;
     }
     printf ( "min = %lld max = %lld \n", min, max );
+    _free(A);
   }
 
   //normal _malloc
@@ -66,7 +67,7 @@ int main ( int argc, char* argv[] )
         max = dt;
     }
     printf ( "min = %lld max = %lld \n", min, max );
+    free(A);
   }
-
   return 0;
 }

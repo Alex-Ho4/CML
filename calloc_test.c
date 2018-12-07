@@ -8,26 +8,39 @@
 
 int main ( int argc, char* argv[] )
 {
-  char* A = NULL;
-  A = (char*) _malloc (6);
-  A[0] = 'A';
-  A[2] = 'B';
-  A[3] = 'C';
-  A[4] = 'D';
-  A[5] = 'E';
-  printf("A ptr is %p\n", &A);
-  for(int i = 0; i < 6; i++)
-  {
-    printf("A data is %d\n", A[i]);
-  }
+  printf("_calloc() test\n\n");
 
+  char* A = NULL;
+  A = (char*) _malloc (4);
+  A[0] = 'A'; A[1] = 'B'; A[2] = 'C'; A[3] = 'D';
+
+  printf("A is : ");
+  for(int i = 0; i < 4; i++)
+  {
+    printf( "%c", A[i] );
+  }
+  printf("\nA address: %p\n", A);
+
+  printf("\nFreeing block\n");
   _free(A);
 
-  A = (char*) _calloc(6,1);
-  printf("A ptr is %p\n", &A);
-  for(int i = 0; i < 6; i++)
+  printf("A is : ");
+  for(int i = 0; i < 4; i++)
   {
-    printf("A data is %d\n", A[i]);
+    printf( "%c", A[i] );
   }
+  printf("\nA address: %p\n", A);
+
+  printf("\nCreate block with calloc\n");
+
+  A = (char*) _calloc(1, 4);
+
+  printf("A is : ");
+  for(int i = 0; i < 4; i++)
+  {
+    printf( "%c", A[i] );
+  }
+  printf("\nA address: %p\n", A);
+
   return 0;
 }
