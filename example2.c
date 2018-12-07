@@ -33,6 +33,7 @@ int main ( int argc, char* argv[] )
         clock_gettime ( CLOCK_MONOTONIC, &t1 );
         double dt = diffTime ( t0, t1 );
         // might want to print dt out and graph it
+        printf (" %f\n", dt );
         if (dt < min)
           min = dt;
         if (dt >max)
@@ -56,7 +57,7 @@ int main ( int argc, char* argv[] )
         t1 = rdtsc ();
         unsigned long long int dt = t1 - t0;
         // might want to print dt out and graph it
-        printf (" %lld\n", dt );
+        //printf (" %lld\n", dt );
         if (dt < min)
           min = dt;
         if (dt >max)
